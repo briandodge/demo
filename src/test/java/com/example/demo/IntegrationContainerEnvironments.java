@@ -3,6 +3,8 @@ package com.example.demo;
 import org.junit.ClassRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @ContextConfiguration(initializers = IntegrationContainerEnvironments.SpringContextInitializer.class)
 public abstract class IntegrationContainerEnvironments {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationContainerEnvironments.class);
 
 
     private static final Boolean droneEnvironment
@@ -46,6 +50,7 @@ public abstract class IntegrationContainerEnvironments {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             if (!droneEnvironment) {
+                LOGGER.info("Setting up test environment context...");
                 EnvironmentTestUtils.addEnvironment("testcontainers", configurableApplicationContext.getEnvironment(),
                         "spring.rabbitmq.host=" + RABBIT_CONTAINER.getContainerIpAddress()
                         ,"spring.rabbitmq.port=" + RABBIT_CONTAINER.getMappedPort(RABBIT_PORT)
